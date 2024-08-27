@@ -32,7 +32,7 @@ public class DadoServiceImpl implements DadoService{
 			resultados.add(new Random().nextInt(6));
 		}
 		
-		Integer somaResultados = resultados.stream().mapToInt(null).sum();
+		Integer somaResultados = resultados.stream().mapToInt(n -> n).sum();
 		BigDecimal percAcerto = BigDecimal.valueOf((somaResultados * 100) / dados.getAposta());
 		
 		
