@@ -2,11 +2,11 @@ package desafio_dados.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import desafio_dados.dto.DadoDto;
+import desafio_dados.dto.ResultadoDto;
 import desafio_dados.service.DadoService;
 
 @RestController
@@ -17,8 +17,8 @@ public class DadoController {
 	private DadoService dadoService;
 	
 	@PostMapping
-	public void lancarDados(@RequestBody DadoDto dados) {
-		dadoService.lancarDados(dados);
+	public ResultadoDto lancarDados(@RequestParam Integer qtd, Integer aposta) {
+		return dadoService.lancarDados(qtd, aposta);
 	}
 	
 }

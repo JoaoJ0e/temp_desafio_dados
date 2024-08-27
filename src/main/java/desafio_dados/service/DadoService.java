@@ -1,9 +1,9 @@
 package desafio_dados.service;
 
-import desafio_dados.dto.DadoDto;
+import desafio_dados.dto.ResultadoDto;
 
 public interface DadoService {
 
-	void lancarDados(DadoDto dados);
+	ResultadoDto lancarDados(Integer qtd, Integer aposta);
 	
 }
