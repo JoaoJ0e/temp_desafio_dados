@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -14,45 +13,63 @@ import desafio_dados.service.DadoService;
 
 @Service
 public class DadoServiceImpl implements DadoService{
-
-	private static List<Integer> resultados = new ArrayList<>();
-	
 	
 	@Override
-	public ResultadoDto lancarDados(Integer qtd, Integer aposta) {
+	public ResponseEntity<?> lancarDados(Integer qtd, Integer aposta) {
 		
+		List<Integer> resultados = new ArrayList<>();
 		
-		// Excessões não se tratam assim! Fiz assim porque joga um erro na tela.
-		// Preciso ver certinho como jogar uma exceção formalizada.
-		if (!isQtdValida(qtd)) {
-			return (ResultadoDto) ResponseEntity.status(HttpStatus.FORBIDDEN);
-		}
+		validaRequisicao(qtd, aposta); // TODO: consertar
+				
+		Random r = new Random();
 		
-		if (!isApostaValida(aposta, qtd)) {
-			return (ResultadoDto) ResponseEntity.status(HttpStatus.FORBIDDEN);
-
-		}
-		
-		resultados.clear();
+		Integer somaResultados = 0;
 		for (int i = 0; i < qtd; i++) {
-			resultados.add(new Random().nextInt(6));
+			Integer lancamento = r.nextInt(1,7);
+			resultados.add(lancamento);
+			somaResultados += lancamento;
 		}
 		
-		Integer somaResultados = resultados.stream().mapToInt(n -> n).sum();
 		
-		// Caso a soma seja maior que a aposta, o resultado será maior que 100%
-		BigDecimal percAcerto = BigDecimal.valueOf((somaResultados * 100) / aposta);
+		/*
+		 * CALCULO DO PERCENTUAL DE ACERTO
+		 * -> Inverte a lógica caso a soma > aposta para garantir um resultado preciso
+		 */
+		BigDecimal percAcerto = null;
+		if (somaResultados <= aposta) {
+			percAcerto = bof(somaResultados * 100).divide(bof(aposta));
+		} else {
+			if (somaResultados == 0) {
+				somaResultados = 1;
+			}
+			percAcerto = BigDecimal.valueOf(aposta * 100).divide(BigDecimal.valueOf(somaResultados));
+		}
 		
-		return new ResultadoDto(resultados, aposta, percAcerto);
+		return ResponseEntity.ok(new ResultadoDto(resultados, somaResultados, aposta, percAcerto));
 		
 	}
 
-	private boolean isQtdValida(Integer qtd) {
-		return qtd >= 1 && qtd <= 4;
+	
+	private BigDecimal bof(Integer i) {
+		return BigDecimal.valueOf(i);
 	}
 	
-	private boolean isApostaValida(Integer aposta, Integer qtd) {
-		return aposta >= 1 * qtd && aposta <= 6 * qtd;
+	
+	private void validaRequisicao(Integer qtdDados, Integer aposta) {
+		validaQtdDados(qtdDados);
+		validaAposta(aposta, qtdDados);
+	}
+	
+	private void validaQtdDados(Integer qtd) {
+		if (qtd >= 1 && qtd <= 4) {
+			throw new IllegalArgumentException("Quantidade de dados deve ser entre 1 e 4");
+		}
+	}
+	
+	private void validaAposta(Integer aposta, Integer qtd) {
+		if (aposta >= qtd && aposta <= 6 * qtd) {
+			throw new IllegalArgumentException("Quantidade de dados deve ser entre 1 e 4");
+		}
 	} 
 	
 }

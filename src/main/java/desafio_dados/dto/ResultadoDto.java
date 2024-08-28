@@ -15,6 +15,7 @@ import lombok.Setter;
 public class ResultadoDto {
 
 	private List<Integer> dados;
+	private Integer somaResultados;
 	private Integer aposta;
 	private BigDecimal percAcerto;
 	

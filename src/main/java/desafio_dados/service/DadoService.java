@@ -1,9 +1,9 @@
 package desafio_dados.service;
 
-import desafio_dados.dto.ResultadoDto;
+import org.springframework.http.ResponseEntity;
 
 public interface DadoService {
 
-	ResultadoDto lancarDados(Integer qtd, Integer aposta);
+	ResponseEntity<?> lancarDados(Integer qtd, Integer aposta);
 	
 }
